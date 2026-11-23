@@ -1,0 +1,183 @@
+{
+  "schema_version": "1",
+  "personal": {
+    "full_name": { "value": "Candidate Name", "status": "confirmed" },
+    "citizenship": { "value": "Russian Federation", "status": "confirmed" },
+    "native_language": { "value": "Russian", "status": "confirmed" },
+    "english_level": { "value": "B2", "status": "imported_from_cv" }
+  },
+  "contact": {
+    "email": { "value": "you@example.com", "status": "confirmed" },
+    "telegram": { "value": "@your_telegram", "status": "confirmed" },
+    "linkedin": { "value": "https://www.linkedin.com/in/your-profile/", "status": "confirmed" }
+  },
+  "education": [
+    {
+      "institution": { "value": "Innopolis University", "status": "confirmed" },
+      "degree": { "value": "Bachelor", "status": "confirmed" },
+      "field": { "value": "Computer Science", "status": "confirmed" },
+      "start_year": { "value": 2022, "status": "confirmed" },
+      "end_year": { "value": 2026, "status": "confirmed" },
+      "highlights": [
+        "Software Architecture",
+        "Lean Agile Software Development",
+        "Software Quality and Security",
+        "Databases",
+        "Machine Learning",
+        "DevOps"
+      ]
+    }
+  ],
+  "experience": [
+    {
+      "company": { "value": "Innotech", "status": "confirmed" },
+      "title": { "value": "QA Engineer", "status": "confirmed" },
+      "location": { "value": null, "status": "unknown" },
+      "start_date": {
+        "value": { "year": 2026, "month": 3, "precision": "month" },
+        "status": "confirmed",
+        "note": "Month and year confirmed. Day of month is unknown and must not be invented."
+      },
+      "end_date": { "value": "present", "status": "confirmed" },
+      "currently_employed": true,
+      "responsibilities": [
+        { "value": "Test case design and execution", "status": "imported_from_cv" },
+        { "value": "Manual, functional, and integration testing of applications and services", "status": "imported_from_cv" },
+        { "value": "API testing with Postman", "status": "imported_from_cv" },
+        { "value": "Database checks with SQL and DBeaver", "status": "imported_from_cv" },
+        { "value": "Using Kafka during integration testing", "status": "imported_from_cv" },
+        { "value": "Retesting bug fixes", "status": "imported_from_cv" },
+        { "value": "Defect reporting", "status": "imported_from_cv" },
+        { "value": "Demonstrating implemented functionality at project demos", "status": "imported_from_cv" },
+        { "value": "Covering for the quality manager when needed", "status": "imported_from_cv" }
+      ]
+    },
+    {
+      "company": { "value": "NOO Online School", "status": "imported_from_cv" },
+      "title": { "value": "Analyst", "status": "imported_from_cv" },
+      "location": { "value": null, "status": "unknown" },
+      "start_date": {
+        "value": { "year": 2025, "month": 2, "precision": "month" },
+        "status": "imported_from_cv"
+      },
+      "end_date": { "value": "present", "status": "imported_from_cv" },
+      "currently_employed": true,
+      "responsibilities": [
+        { "value": "Analysis of user requests", "status": "imported_from_cv" },
+        { "value": "Root-cause analysis and follow-up on issue resolution", "status": "imported_from_cv" },
+        { "value": "Automation of data tracking and verification", "status": "imported_from_cv" },
+        { "value": "Internal process optimization", "status": "imported_from_cv" }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": { "value": "Telegram bot for AI news analysis", "status": "imported_from_cv" },
+      "summary": {
+        "value": "Python backend, automated tests, and CI/CD setup",
+        "status": "imported_from_cv"
+      },
+      "technologies": ["Python", "GitHub Actions"]
+    },
+    {
+      "name": { "value": "AI solution concept for a client", "status": "imported_from_cv" },
+      "summary": {
+        "value": "Technology stack research and service architecture exploration",
+        "status": "imported_from_cv"
+      },
+      "technologies": []
+    }
+  ],
+  "skills": [
+    { "name": "Manual testing", "category": "testing" },
+    { "name": "Functional testing", "category": "testing" },
+    { "name": "Integration testing", "category": "testing" },
+    { "name": "Test case design and execution", "category": "testing" },
+    { "name": "Retesting bug fixes", "category": "testing" },
+    { "name": "Defect reporting", "category": "testing" },
+    { "name": "Basic UI testing", "category": "testing" },
+    { "name": "Feature demonstrations", "category": "testing" },
+    { "name": "Postman", "category": "api_and_databases" },
+    { "name": "SQL", "category": "api_and_databases" },
+    { "name": "PostgreSQL", "category": "api_and_databases" },
+    { "name": "DBeaver", "category": "api_and_databases" },
+    { "name": "Kafka", "category": "api_and_databases" },
+    { "name": "Python", "category": "programming_and_tools" },
+    { "name": "Java", "category": "programming_and_tools" },
+    { "name": "Git", "category": "programming_and_tools" },
+    { "name": "GitHub Actions", "category": "programming_and_tools" },
+    { "name": "Docker", "category": "programming_and_tools" },
+    { "name": "Linux", "category": "programming_and_tools" },
+    { "name": "Grafana", "category": "programming_and_tools" },
+    { "name": "Analytical thinking", "category": "soft_skills" },
+    { "name": "Attention to detail", "category": "soft_skills" },
+    { "name": "Responsibility and initiative", "category": "soft_skills" },
+    { "name": "Adaptability", "category": "soft_skills" },
+    { "name": "Cross-functional collaboration", "category": "soft_skills" }
+  ],
+  "languages": [
+    {
+      "name": "Russian",
+      "level": { "value": "native", "status": "confirmed" }
+    },
+    {
+      "name": "English",
+      "level": { "value": "B2", "status": "imported_from_cv" }
+    }
+  ],
+  "career_preferences": {
+    "target_roles": [
+      "Manual QA / QA Engineer",
+      "API QA / API Testing",
+      "Integration Testing / Integration QA",
+      "Junior QA Automation"
+    ],
+    "experience_band": "junior_0_2",
+    "also_consider_years": "2_3_if_strong_fit",
+    "match_weights": {
+      "role_and_duties": 25,
+      "technical_skills": 25,
+      "geography": 25,
+      "salary": 15,
+      "ethics": 10
+    }
+  },
+  "geographic_preferences": {
+    "priority_countries": ["Spain", "United Kingdom", "Australia"],
+    "other_countries_allowed": true,
+    "work_from_russia_first": true,
+    "relocation_desired": true,
+    "relocation_required": false,
+    "has_foreign_work_permit": { "value": false, "status": "confirmed" },
+    "has_foreign_residence_permit": { "value": false, "status": "confirmed" }
+  },
+  "salary_expectations": {
+    "amount": 100000,
+    "currency": "RUB",
+    "period": "month",
+    "kind": "net",
+    "preferred_currencies": ["EUR", "USD", "GBP", "AUD", "RUB"]
+  },
+  "employment_preferences": {
+    "accepted_types": [
+      "local_employment",
+      "eor",
+      "b2b",
+      "independent_contractor",
+      "direct_contractor"
+    ],
+    "preferred_work_mode": "remote",
+    "hybrid_or_office_if_relocation": true
+  },
+  "ethical_restrictions": {
+    "hard_exclusions": [
+      "government_military",
+      "gambling_betting",
+      "surveillance_spyware",
+      "tobacco",
+      "adult_industry"
+    ],
+    "lower_priority": ["cryptocurrency", "oil_and_gas"],
+    "unpaid_work_allowed": false
+  }
+}
