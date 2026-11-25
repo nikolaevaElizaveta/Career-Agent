@@ -3,9 +3,9 @@
 Local assistant for international job search: profile, Telegram UI, later job
 discovery, matching, applications, and Gmail.
 
-This repository currently includes **stage 0–2**: design, Candidate Profile, and
-a personal Telegram bot. Gmail, job boards, and language models are **not**
-connected yet.
+This repository currently includes **stages 0–3**: design, Candidate Profile,
+a personal Telegram bot, and Job Discovery (Remotive + optional Adzuna).
+Gmail and language models are **not** connected yet.
 
 ## What works today
 
@@ -16,8 +16,9 @@ connected yet.
 python -m career_agent profile validate
 ```
 
-- Local Telegram bot (`/start`, `/help`, `/whoami`, `/status`, `/profile`)
+- Local Telegram bot (`/start`, `/help`, `/whoami`, `/status`, `/profile`, `/jobs`)
   locked to your numeric user ID.
+- Job search from the terminal (Remotive public API; Adzuna if keys are set).
 
 The command prints whether the profile file is valid, which required data is
 missing, and which values still need confirmation.
@@ -96,6 +97,12 @@ python -m career_agent profile validate --path data/candidate_profile.example.js
 # Start the Telegram bot (needs TELEGRAM_BOT_TOKEN in .env)
 python -m career_agent bot run
 
+# Job discovery
+python -m career_agent jobs search
+python -m career_agent jobs search --source remotive
+python -m career_agent jobs list --limit 10
+python -m career_agent jobs show <id>
+
 # Tests
 pytest
 
@@ -109,6 +116,29 @@ name, or a broken JSON file fails with exit code `1`.
 
 If the bot token is missing, `bot run` prints a short instruction and exits
 with code `1` — it does not start polling.
+
+If Adzuna keys are missing, `jobs search` still runs Remotive and prints why
+Adzuna was skipped.
+
+## Job discovery
+
+Keywords, countries, and enabled sources: `config/job_search.yaml`.
+
+| Source | Key | Notes |
+|---|---|---|
+| Remotive | none | QA category, max 4 calls / day and 2 / minute, 24h publish delay |
+| Adzuna | `ADZUNA_APP_ID`, `ADZUNA_APP_KEY` | Optional. Markets `gb`, `es`, `au` |
+
+Jobs are stored in `data/career_agent.sqlite` (gitignored).
+
+Dedup: the same `source` + `source_job_id` is stored once. The same company and
+title (or the same URL) from two boards is kept as a probable duplicate with
+both links. Two companies with the same title are not merged.
+
+Unknown salary, unknown remote eligibility, and “Remote” in the text are **not**
+treated as a match for working from Russia.
+
+Telegram `/jobs` only points to these CLI commands until we review the listings.
 
 ## Telegram bot setup
 
@@ -217,4 +247,4 @@ See `docs/SECURITY.md`.
 
 ## Next stage
 
-Stage 3: Job Discovery from legal free sources. Not started yet.
+Stage 4: Job Matcher. Not started yet.

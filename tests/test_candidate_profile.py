@@ -118,3 +118,93 @@ def test_private_profile_innotech_start_is_confirmed_month() -> None:
     assert innotech.start_date.value is not None
     assert innotech.start_date.value.as_text() == "2026-03"
     assert innotech.start_date.value.day is None
+
+def test_unverified_free_text_is_excluded_from_document_facts() -> None:
+    from career_agent.domain.candidate import (
+        LanguageItem,
+        ProjectItem,
+        SkillItem,
+    )
+    from career_agent.domain.fields import ProfileField
+
+    service = ProfileService()
+    profile = service.load(EXAMPLE_PROFILE)
+
+    profile.skills.append(
+        SkillItem(
+            name="Unverified Selenium",
+            category="test_automation",
+            proficiency=ProfileField(
+                value="advanced",
+                status=VerificationStatus.UNKNOWN,
+            ),
+        )
+    )
+
+    profile.skills.append(
+        SkillItem(
+            name="Confirmed Postman",
+            category="api_testing",
+            proficiency=ProfileField(
+                value="basic",
+                status=VerificationStatus.CONFIRMED,
+            ),
+        )
+    )
+
+    profile.languages.append(
+        LanguageItem(
+            name="Unverified Language",
+            level=ProfileField(
+                value="C2",
+                status=VerificationStatus.UNKNOWN,
+            ),
+        )
+    )
+
+    profile.projects.append(
+        ProjectItem(
+            name=ProfileField(
+                value="Example Project",
+                status=VerificationStatus.CONFIRMED,
+            ),
+            summary=ProfileField(
+                value="Example project summary",
+                status=VerificationStatus.CONFIRMED,
+            ),
+            technologies=["Unverified Go", "Unverified Selenium"],
+        )
+    )
+
+    profile.education[0].highlights = ["Unverified academic achievement"]
+
+    facts = service.facts_for_documents(profile)
+
+    unknown_skill = facts["skills"][-2]
+    confirmed_skill = facts["skills"][-1]
+    unknown_language = facts["languages"][-1]
+    project = facts["projects"][-1]
+    education = facts["education"][0]
+
+    assert unknown_skill["name"] is None
+    assert unknown_skill["category"] is None
+    assert confirmed_skill["name"] == "Confirmed Postman"
+    assert confirmed_skill["proficiency"] == "basic"
+
+    assert unknown_language["name"] is None
+    assert unknown_language["level"] is None
+
+    assert project["name"] == "Example Project"
+    assert project["summary"] == "Example project summary"
+    assert project["technologies"] == []
+
+    assert education["highlights"] == []
+
+    # The original profile is preserved; only its document projection is filtered.
+    assert profile.projects[-1].technologies == [
+        "Unverified Go",
+        "Unverified Selenium",
+    ]
+    assert profile.education[0].highlights == [
+        "Unverified academic achievement"
+    ]

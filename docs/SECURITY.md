@@ -9,7 +9,8 @@ data system, not as a demo.
 - `.env.example` contains **names and placeholders only**.
 - Never commit tokens, Gmail client secrets, SQLite dumps of private data, or
   `data/candidate_profile.json`.
-- Never print tokens, passwords, or email bodies in logs.
+- Never print tokens, passwords, Adzuna keys, or email bodies in logs.
+- SQLite files under `data/` are gitignored. They must not be committed.
 
 ## Candidate profile
 
@@ -36,6 +37,13 @@ file into chats, GitHub, or issue trackers.
   command name (`profile`, `whoami`) and whether access was allowed.
 - Anyone who can guess an unrestricted bot username could message it. The
   allow-list is what keeps the CV private.
+
+## Job APIs (stage 3)
+
+- Remotive needs no key. Do not republish their jobs on other aggregators.
+- Adzuna keys stay in `.env` as `ADZUNA_APP_ID` / `ADZUNA_APP_KEY`.
+- HTTP helpers must not log query strings (they can contain Adzuna keys).
+- Discovery never submits applications.
 
 ## Gmail (stage 6) — important boundary
 

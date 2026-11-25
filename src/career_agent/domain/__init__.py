@@ -3,6 +3,7 @@ from career_agent.domain.candidate import CandidateProfile
 from career_agent.domain.dates import DatePrecision, PartialDate
 from career_agent.domain.fields import ProfileField, VerificationStatus
 from career_agent.domain.job import Job, WorkAuthorizationVerdict
+from career_agent.domain.job_posting import JobPosting
 
 __all__ = [
     "ApplicationRecord",
@@ -10,6 +11,7 @@ __all__ = [
     "CandidateProfile",
     "DatePrecision",
     "Job",
+    "JobPosting",
     "PartialDate",
     "ProfileField",
     "VerificationStatus",

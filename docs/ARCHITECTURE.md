@@ -23,9 +23,9 @@ A **modular monolith** means:
 | CLI | stdlib `argparse` | Enough for `profile validate`; no Click yet |
 | Tests | pytest | Specified |
 | Lint | Ruff | Fast, one tool for format + lint |
-| DB (later) | SQLite + SQLAlchemy 2 + Alembic | Local, free, easy to move to PostgreSQL later |
+| DB (stage 3) | SQLite + SQLAlchemy 2 | Local file; Alembic later if schema churns |
 | Telegram (stage 2) | aiogram 3 + long polling | Personal UI; allow-listed user ID |
-| HTTP (later) | HTTPX | Async-capable when we add sources |
+| HTTP (stage 3) | HTTPX | Timeouts, no infinite retries |
 | Mail (later) | Gmail API + OAuth 2.0 | No passwords; secrets stay off Git |
 | Secrets (later) | `.env` now, macOS Keychain for OAuth tokens | Tokens must not be committed |
 | LLM (later) | Interface + optional Ollama | Core logic must run without an LLM |
@@ -34,8 +34,8 @@ A **modular monolith** means:
 on brand-new versions, so the documented local interpreter is **Python 3.13**
 (`/opt/homebrew/bin/python3.13`).
 
-Dependencies are added **only when a module needs them**. Stage 2 adds `aiogram`.
-Still no FastAPI, SQLAlchemy, Gmail, or LLM libraries.
+Dependencies are added **only when a module needs them**. Stage 3 adds `httpx`,
+`SQLAlchemy`, and `PyYAML`. Still no FastAPI, Gmail, or LLM libraries.
 
 ## Package layout
 
@@ -47,12 +47,14 @@ career-agent/
 │   └── candidate_profile.json           # real profile (gitignored)
 ├── src/career_agent/
 │   ├── config.py              # settings from environment
+│   ├── config_loader.py       # YAML job-search settings
 │   ├── main.py                # CLI entry
-│   ├── domain/                # pure data models, no I/O
-│   ├── services/              # use-cases (profile validation, later matching)
-│   ├── repositories/          # persistence (empty until SQLite)
-│   ├── integrations/          # telegram (stage 2); gmail/job boards later
-│   └── workflows/             # multi-step processes (later)
+│   ├── domain/                # Candidate Profile + JobPosting
+│   ├── services/              # profile + job discovery
+│   ├── repositories/          # SQLite job store
+│   ├── integrations/telegram/
+│   ├── integrations/job_sources/  # Remotive, Adzuna
+│   └── workflows/
 └── tests/
 ```
 
@@ -64,7 +66,7 @@ Candidate Profile (JSON, private)
         ▼
   ProfileService  ── validates, hides unconfirmed facts from documents
         │
-        ├── Job Discovery (later) ──► Job records (deduplicated)
+        ├── Job Discovery (stage 3) ──► SQLite job_postings
         │         │
         │         ▼
         ├── Job Matcher (later) ──► score + explanation
@@ -124,7 +126,7 @@ Default weights, user-editable later:
 
 | System | Allowed now | Never |
 |---|---|---|
-| Job boards | Public APIs, RSS, official career pages, manual URL | CAPTCHA bypass, closed APIs, login circumvention |
+| Job boards | Remotive public API; Adzuna with keys | CAPTCHA bypass, closed APIs, login circumvention |
 | LinkedIn | Store URLs; draft text for manual send | Scraping, automated InMail |
 | Gmail | Later: OAuth, read, then drafts | Password login; deleting mail; changing Gmail settings |
 | Telegram | Local long polling, allow-listed user ID | Logging tokens or message bodies |

@@ -1,1 +1,5 @@
-"""Persistence adapters. SQLite repositories will appear in a later stage."""
+"""Persistence adapters."""
+
+from career_agent.repositories.job_repository import JobRepository
+
+__all__ = ["JobRepository"]

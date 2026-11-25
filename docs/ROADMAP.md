@@ -30,13 +30,17 @@ profile is gitignored.
 
 No Gmail, no job scraping.
 
-## Stage 3 — Job Discovery
+## Stage 3 — Job Discovery (this pass)
 
-- Source interface
-- Manual add-by-URL
-- First legal free sources (see `DATA_SOURCES.md`)
-- Parse, deduplicate, store
-- No LinkedIn scraping
+- [x] `JobSource` interface
+- [x] Remotive public API (`category=qa`) with local rate limits
+- [x] Adzuna adapter (skipped without keys)
+- [x] SQLite storage, CLI list/show
+- [x] Deduplication (exact + probable)
+- [ ] Manual add-by-URL / CSV (later)
+- [ ] Telegram `/jobs` listing (CLI first; bot only shows how to run it)
+
+No LinkedIn scraping. No matcher yet.
 
 ## Stage 4 — Job Matcher
 

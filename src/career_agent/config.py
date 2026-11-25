@@ -53,6 +53,25 @@ class Settings(BaseSettings):
             "telegram_allowed_user_id",
         ),
     )
+    database_path: Path = Field(
+        default=Path("data/career_agent.sqlite"),
+        validation_alias=AliasChoices("CAREER_AGENT_DATABASE_PATH", "database_path"),
+    )
+    job_search_config_path: Path = Field(
+        default=Path("config/job_search.yaml"),
+        validation_alias=AliasChoices(
+            "CAREER_AGENT_JOB_SEARCH_CONFIG",
+            "job_search_config_path",
+        ),
+    )
+    adzuna_app_id: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("ADZUNA_APP_ID", "adzuna_app_id"),
+    )
+    adzuna_app_key: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("ADZUNA_APP_KEY", "adzuna_app_key"),
+    )
 
     @field_validator("telegram_bot_token", mode="before")
     @classmethod
@@ -66,6 +85,15 @@ class Settings(BaseSettings):
     @field_validator("telegram_allowed_user_id", mode="before")
     @classmethod
     def empty_user_id_to_none(cls, value: Any) -> Any:
+        if value is None:
+            return None
+        if isinstance(value, str) and not value.strip():
+            return None
+        return value
+
+    @field_validator("adzuna_app_id", "adzuna_app_key", mode="before")
+    @classmethod
+    def empty_adzuna_to_none(cls, value: Any) -> Any:
         if value is None:
             return None
         if isinstance(value, str) and not value.strip():

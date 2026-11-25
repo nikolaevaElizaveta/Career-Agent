@@ -1,7 +1,6 @@
-# Data sources (plan, not implemented in stage 1)
+# Data sources
 
-Stage 1 does **not** call the network. This file records what we will consider
-later so Job Discovery stays legal and cheap.
+Stage 3 implements two adapters behind the same `JobSource` interface.
 
 ## Rules
 
@@ -9,35 +8,47 @@ later so Job Discovery stays legal and cheap.
 2. No paid product without an explicit yes.
 3. No closed/private APIs, no CAPTCHA bypass, no session hijacking.
 4. No automated LinkedIn scraping or messaging.
-5. Deduplicate the same posting across sites (canonical URL + company + title).
+5. Deduplicate by `source + source_job_id`, then by company + title + URL.
+6. Do not republish Remotive listings on other public aggregators.
 
-## Likely first sources (to evaluate in stage 3)
+Search keywords and enabled sources live in `config/job_search.yaml`. Change that
+file instead of editing Python.
 
-| Source | Why it is a candidate | Caution |
-|---|---|---|
-| Manual URL | Always allowed; user pastes a link | Parsing quality varies |
-| CSV import (later) | User-exported search results | Need a stable column map |
-| Public Greenhouse / Lever / Ashby job JSON | Many companies expose public boards | Company list must be curated; still check geo |
-| RSS where a board publishes it | Simple, polite | Incomplete fields |
-| Documented public job APIs (e.g. some remote-job indexes) | No login | Read terms; many US-only or “anywhere” flags are sloppy |
+## Remotive (enabled, no API key)
 
-Each source adapter will implement the same interface, roughly:
+- Docs: https://remotive.com/remote-jobs/api
+- Endpoint: `https://remotive.com/api/remote-jobs?category=qa`
+- Public JSON API. Jobs are delayed about **24 hours** by Remotive.
+- Limits we enforce locally: **at most 2 requests per minute** and **4 per 24 hours**.
+- Always keep the original Remotive URL.
+- Always display the source as **Remotive**.
+- `candidate_required_location` of `Worldwide` is stored as `remote_scope=worldwide`.
+  That is **not** treated as “hires from Russia”.
+- If location is missing, `remote_scope` stays `unknown`.
 
-- `fetch()` → raw postings
-- `normalize()` → `Job` domain model
-- `source_name` for provenance
+## Adzuna (adapter ready, optional keys)
 
-## Not in the first discovery set
+- Docs: https://developer.adzuna.com/docs/search
+- Needs `ADZUNA_APP_ID` and `ADZUNA_APP_KEY` in local `.env`.
+- Planned markets: `gb`, `es`, `au` (see YAML).
+- If keys are missing, Adzuna is **skipped** and the rest of the app still runs.
+- A 404 for a country is treated as “market unavailable”, not as a crash.
+- Do not paste Adzuna keys into Cursor or ChatGPT.
 
-- LinkedIn Easy Apply automation
-- HeadHunter / other sites if it requires login bypass
-- Paid aggregators
-- Anything that needs a foreign credit card to create an API key
+## Deduplication
 
-## Fields we must store per job (later)
+1. Exact: same `source` and `source_job_id` → do not insert again.
+2. Probable: same normalized company **and** title, or equivalent job URL, across
+   sources → insert with `duplicate_of_id` and keep both original URLs.
+3. Same job title at two different companies is **not** a duplicate.
 
-Title, company, country, city, URL, posted date, discovered date, salary +
-currency, level, work mode, tech, experience, work-permit requirements,
-relocation, description, source.
+## Storage
 
-Work authorization and salary stay `unknown` when the posting is silent.
+SQLite file `data/career_agent.sqlite` (gitignored). Path:
+`CAREER_AGENT_DATABASE_PATH`.
+
+## Not in this stage
+
+- LinkedIn automation
+- Manual URL import / CSV (later)
+- Matching, cover letters, applications

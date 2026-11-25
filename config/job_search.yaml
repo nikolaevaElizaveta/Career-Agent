@@ -1,0 +1,60 @@
+# Edit this file to change search queries without touching Python code.
+
+keywords:
+  - Manual QA
+  - QA Engineer
+  - Quality Assurance Engineer
+  - Software Tester
+  - API Testing
+  - API QA
+  - Integration Testing
+  - Integration QA
+  - Junior QA Automation
+  - Junior Test Automation Engineer
+
+geography:
+  priority_countries:
+    - Spain
+    - United Kingdom
+    - Australia
+  include_remote_worldwide: true
+
+sources_enabled:
+  remotive: true
+  himalayas: true
+  adzuna: true
+
+remotive:
+  enabled: true
+  # Official Remotive category slug for Quality Assurance.
+  # One request per search run (Remotive allows max 4 API calls per day).
+  category: qa
+  extra_search: null
+
+himalayas:
+  enabled: true
+  countries:
+    - RU
+  queries:
+    - QA Engineer
+    - Manual QA
+    - API Testing
+    - QA Automation
+    - Integration Testing
+    - API QA
+    - Integration QA
+  sort: relevant
+  max_pages: 1
+  request_delay_seconds: 1.5
+
+adzuna:
+  enabled: true
+  countries:
+    - gb
+    - es
+    - au
+  queries:
+    - QA Engineer
+    - Manual QA
+    - API Testing
+  results_per_page: 20

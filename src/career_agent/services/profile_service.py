@@ -3,12 +3,20 @@
 from __future__ import annotations
 
 import json
+import os
+import tempfile
 from pathlib import Path
 from typing import Any
 
 from pydantic import BaseModel, ValidationError
 
-from career_agent.domain.candidate import CandidateProfile
+from career_agent.domain.candidate import (
+    CandidateProfile,
+    EducationItem,
+    LanguageItem,
+    ProjectItem,
+    SkillItem,
+)
 from career_agent.domain.fields import (
     IssueSeverity,
     ProfileField,
@@ -34,6 +42,35 @@ class ProfileService:
     def load(self, path: Path) -> CandidateProfile:
         raw = json.loads(path.read_text(encoding="utf-8"))
         return CandidateProfile.model_validate(raw)
+
+    def save(self, profile: CandidateProfile, path: Path) -> None:
+        """Atomically save the complete Candidate Profile as UTF-8 JSON."""
+        serialized = json.dumps(
+            profile.model_dump(mode="json"),
+            ensure_ascii=False,
+            indent=2,
+        ) + "\n"
+
+        temporary_path: Path | None = None
+
+        try:
+            with tempfile.NamedTemporaryFile(
+                mode="w",
+                encoding="utf-8",
+                dir=path.parent,
+                prefix=f".{path.name}.",
+                suffix=".tmp",
+                delete=False,
+            ) as temporary_file:
+                temporary_path = Path(temporary_file.name)
+                temporary_file.write(serialized)
+                temporary_file.flush()
+                os.fsync(temporary_file.fileno())
+
+            os.replace(temporary_path, path)
+        finally:
+            if temporary_path is not None:
+                temporary_path.unlink(missing_ok=True)
 
     def validate_path(self, path: Path) -> tuple[ValidationReport, CandidateProfile | None]:
         if not path.exists():
@@ -317,14 +354,54 @@ def walk_profile_fields(
 
 
 def confirmed_view(obj: Any) -> Any:
+    """Return confirmed document facts and exclude unverified free-text claims."""
     if isinstance(obj, ProfileField):
         if obj.usable_in_documents():
             return confirmed_view(obj.value)
         return None
+
+    if isinstance(obj, SkillItem):
+        proficiency_confirmed = obj.proficiency.usable_in_documents()
+        return {
+            "name": obj.name if proficiency_confirmed else None,
+            "category": obj.category if proficiency_confirmed else None,
+            "proficiency": confirmed_view(obj.proficiency),
+            "commercial_experience": confirmed_view(
+                obj.commercial_experience
+            ),
+        }
+
+    if isinstance(obj, LanguageItem):
+        level_confirmed = obj.level.usable_in_documents()
+        return {
+            "name": obj.name if level_confirmed else None,
+            "level": confirmed_view(obj.level),
+        }
+
+    if isinstance(obj, ProjectItem):
+        return {
+            "name": confirmed_view(obj.name),
+            "summary": confirmed_view(obj.summary),
+            "technologies": [],
+        }
+
+    if isinstance(obj, EducationItem):
+        return {
+            "institution": confirmed_view(obj.institution),
+            "degree": confirmed_view(obj.degree),
+            "field": confirmed_view(obj.field),
+            "start_year": confirmed_view(obj.start_year),
+            "end_year": confirmed_view(obj.end_year),
+            "highlights": [],
+        }
+
     if isinstance(obj, BaseModel):
         return {
-            name: confirmed_view(getattr(obj, name)) for name in type(obj).model_fields
+            name: confirmed_view(getattr(obj, name))
+            for name in type(obj).model_fields
         }
+
     if isinstance(obj, list):
         return [confirmed_view(item) for item in obj]
+
     return obj
